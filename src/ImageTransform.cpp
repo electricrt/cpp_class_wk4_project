@@ -106,22 +106,24 @@ PNG createSpotlight(PNG image, int centerX, int centerY) {
  *
  * @return The illinify'd image.
 **/
+
 PNG illinify(PNG image) {
     for (unsigned x = 0; x < image.width(); x++) {
         for (unsigned y = 0; y < image.height(); y++) {
             HSLAPixel & pixel = image.getPixel(x, y);
 
-            if (pixel.h < 113.5 || pixel.h > 293.5) {
-                pixel.h = 216; // Illini Blue
-            } else {
-                pixel.h = 11; // Illini Orange
-            }
+            // Find the shortest distance to Illini blue and Illini orange
+            double blue_distance = std::min(abs(pixel.h - 216), 360 - abs(pixel.h - 216));
+            double orange_distance = std::min(abs(pixel.h - 11), 360 - abs(pixel.h - 11));
+
+            // Set the hue to the closest color
+            pixel.h = (blue_distance < orange_distance) ? 216 : 11;
         }
     }
 
     return image;
 }
- 
+
 
 /**
 * Returns an immge that has been watermarked by another image.
