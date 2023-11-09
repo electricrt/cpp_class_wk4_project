@@ -39,11 +39,17 @@ TEST_CASE("createSpotlight", "[weight=1]") {
     REQUIRE( png.getPixel(100, 50).l == result.getPixel(100, 50).l );
   }
 
-  SECTION("Spotlight should create an 80% dark pixel >160 pixels away") {
+  /*SECTION("Spotlight should create an 80% dark pixel >160 pixels away") {
     REQUIRE( png.getPixel(320, 50).l * 0.2 == Approx(result.getPixel(320, 50).l) );
-  }
-  
-  SECTION("Spotlight should be correct at 20 pixels away from center") {
+  }*/
+    // replacement unit test
+    SECTION("Spotlight should create an 80% dark pixel >160 pixels away") {
+        double expectedLum = png.getPixel(320, 50).l * 0.2;
+        REQUIRE( expectedLum == Approx(result.getPixel(320, 50).l) );
+    }
+
+
+    SECTION("Spotlight should be correct at 20 pixels away from center") {
     REQUIRE( png.getPixel(100, 50 + 20).l * 0.9 == Approx(result.getPixel(100, 50 + 20).l) );
   }
 

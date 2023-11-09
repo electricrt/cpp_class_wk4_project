@@ -11,8 +11,8 @@
 
 Write your name and email address in the comment space here:
 
-Name:
-Email:
+Name: Alan Hu
+Email: ahu9@go.pasasdena.edu
 
 (...end multi-line comment.)
 ******************** */
@@ -68,10 +68,33 @@ PNG grayscale(PNG image) {
  */
 PNG createSpotlight(PNG image, int centerX, int centerY) {
 
-  return image;
-  
+    for (unsigned x = 0; x < image.width(); x++) {
+        for (unsigned y = 0; y < image.height(); y++) {
+
+            HSLAPixel & pixel = image.getPixel(x, y);
+
+            // Calculate distance
+            int dx = x - centerX;
+            int dy = y - centerY;
+            double dist = sqrt((dx*dx) + (dy*dy));
+
+            double factor = 1.0; // Start with no change to the luminance
+
+            if (dist > 160) {
+                factor = 0.2; // Beyond 160 pixels, luminance is decreased by 80%
+            } else if (dist <= 160) {
+                factor = 1.0 - (dist * 0.005); // Decrease by 0.5% per pixel distance
+            }
+
+            pixel.l *= factor;
+
+        }
+    }
+
+    return image;
 }
- 
+
+
 
 /**
  * Returns a image transformed to Illini colors.
@@ -84,8 +107,19 @@ PNG createSpotlight(PNG image, int centerX, int centerY) {
  * @return The illinify'd image.
 **/
 PNG illinify(PNG image) {
+    for (unsigned x = 0; x < image.width(); x++) {
+        for (unsigned y = 0; y < image.height(); y++) {
+            HSLAPixel & pixel = image.getPixel(x, y);
 
-  return image;
+            if (pixel.h < 113.5 || pixel.h > 293.5) {
+                pixel.h = 216; // Illini Blue
+            } else {
+                pixel.h = 11; // Illini Orange
+            }
+        }
+    }
+
+    return image;
 }
  
 
@@ -103,5 +137,27 @@ PNG illinify(PNG image) {
 */
 PNG watermark(PNG firstImage, PNG secondImage) {
 
-  return firstImage;
+    // Loop through pixels within bounds of both images
+    unsigned minWidth = std::min(firstImage.width(), secondImage.width());
+    unsigned minHeight = std::min(firstImage.height(), secondImage.height());
+
+    for (unsigned x = 0; x < minWidth; x++) {
+        for (unsigned y = 0; y < minHeight; y++) {
+
+            HSLAPixel &firstPixel = firstImage.getPixel(x, y);
+            HSLAPixel &secondPixel = secondImage.getPixel(x, y);
+
+            // If stencil pixel is max luminance, increase base luminance
+            if (secondPixel.l == 1) {
+                firstPixel.l += 0.2;
+                if (firstPixel.l > 1) {
+                    firstPixel.l = 1;
+                }
+            }
+
+        }
+    }
+
+    return firstImage;
 }
+
