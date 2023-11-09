@@ -12,4 +12,24 @@
 using namespace std;
 
 namespace uiuc {
+    HSLAPixel::HSLAPixel() {
+        a = 1.0;
+        l = 1.0;
+        s = 1.0;
+        h = 1.0;
+    }
+
+    HSLAPixel::HSLAPixel(double hue, double saturation, double luminance) {
+        a = 1.0;
+        l = luminance;
+        s = saturation;
+        h = hue;
+    }
+
+    HSLAPixel::HSLAPixel(double hue, double saturation, double luminance, double alpha) {
+        a = alpha;
+        l = luminance;
+        s = saturation;
+        h = hue;
+    }
 }
